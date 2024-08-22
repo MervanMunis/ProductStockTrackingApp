@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "me5zcLSoQ0Q=",
+  "dgSpecHash": "9JTSH/X1j7g=",
   "success": true,
   "projectFilePath": "C:\\Users\\merva\\Desktop\\StockTrackingApp\\Presentation\\Presentation.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\merva\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
+    "C:\\Users\\merva\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.authorization\\2.2.0\\microsoft.aspnetcore.authorization.2.2.0.nupkg.sha512",
@@ -20,7 +22,7 @@
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.routing\\2.2.0\\microsoft.aspnetcore.routing.2.2.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.routing.abstractions\\2.2.0\\microsoft.aspnetcore.routing.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.aspnetcore.webutilities\\2.2.0\\microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512",
-    "C:\\Users\\merva\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
+    "C:\\Users\\merva\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.dotnet.platformabstractions\\2.1.0\\microsoft.dotnet.platformabstractions.2.1.0.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.33\\microsoft.entityframeworkcore.6.0.33.nupkg.sha512",
     "C:\\Users\\merva\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.33\\microsoft.entityframeworkcore.abstractions.6.0.33.nupkg.sha512",

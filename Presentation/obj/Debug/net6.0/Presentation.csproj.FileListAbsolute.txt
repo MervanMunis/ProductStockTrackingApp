@@ -17,3 +17,4 @@ C:\Users\merva\Desktop\StockTrackingApp\Presentation\obj\Debug\net6.0\Presentati
 C:\Users\merva\Desktop\StockTrackingApp\Presentation\obj\Debug\net6.0\refint\Presentation.dll
 C:\Users\merva\Desktop\StockTrackingApp\Presentation\obj\Debug\net6.0\Presentation.pdb
 C:\Users\merva\Desktop\StockTrackingApp\Presentation\obj\Debug\net6.0\ref\Presentation.dll
+C:\Users\merva\Desktop\StockTrackingApp\Presentation\obj\Debug\net6.0\Presentation.sourcelink.json

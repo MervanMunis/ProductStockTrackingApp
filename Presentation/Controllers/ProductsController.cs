@@ -1,11 +1,6 @@
-﻿using Entities.Models;
+﻿using Entities.DTOs.ProductDTO;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
@@ -21,25 +16,25 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllProducts()
+        public async Task<IActionResult> GetAllProducts()
         {
             try
             {
-                var products = _manager.ProductService.GetAllProducts(false);
+                var products = await _manager.ProductService.GetAllProductsAsync(false);
                 return Ok(products);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpGet("prdoctById")]
-        public IActionResult GetProductById([FromBody] Guid id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetProductById([FromRoute(Name = "id")] Guid id)
         {
             try
             {
-                var product = _manager.ProductService.GetProductById(id, false);
+                var product = await _manager.ProductService.GetProductByIdAsync(id, false);
 
                 if (product is null)
                 {
@@ -50,62 +45,62 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPost]
-        public IActionResult CreateOneProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateOneProduct([FromBody] ProductRequest productRequest)
         {
             try
             {
-                if (product is null)
+                if (productRequest is null)
                 {
                     return BadRequest();
                 }
 
-                _manager.ProductService.CreateProduct(product);
+                var createdProduct = await _manager.ProductService.CreateProductAsync(productRequest);
 
-                return StatusCode(201, product);
+                return StatusCode(201, createdProduct);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public IActionResult UpdateOneProduct([FromRoute(Name = "id")] Guid id, [FromBody] Product product)
+        public async Task<IActionResult> UpdateOneProduct([FromRoute(Name = "id")] Guid id, [FromBody] ProductRequest productRequest)
         {
             try
             {
-                if (product is null)
+                if (productRequest is null)
                 {
-                    return BadRequest(); // 400
+                    return BadRequest();
                 }
 
-                _manager.ProductService.UpdateProduct(id, product, true);
-
-                return NoContent(); // 204
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        [HttpDelete("{id:Guid}")]
-        public IActionResult DeleteOneProduct([FromRoute(Name = "id")] Guid id)
-        {
-            try
-            {
-                _manager.ProductService.DeleteProduct(id, false);
+                await _manager.ProductService.UpdateProductAsync(id, productRequest, true);
 
                 return NoContent();
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> DeleteOneProduct([FromRoute(Name = "id")] Guid id)
+        {
+            try
+            {
+                await _manager.ProductService.DeleteProductAsync(id, false);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

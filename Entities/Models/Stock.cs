@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Entities.Models
 {
@@ -13,8 +8,15 @@ namespace Entities.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid UUID { get; set; }
+
+        [Required]
         public Guid ProductId { get; set; }
+
+        [Required]
         public int Quantity { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime CreationTime { get; set; }
         public bool IsDeleted { get; set; }
 

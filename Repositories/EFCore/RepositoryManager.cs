@@ -1,9 +1,4 @@
 ﻿using Repositories.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories.EFCore
 {
@@ -11,18 +6,21 @@ namespace Repositories.EFCore
     {
         private readonly RepositoryContext _context;
         private readonly Lazy<IProductRepository> _productRepository;
+        private readonly Lazy<IStockRepository> _stockRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _context = repositoryContext;
             _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_context));
+            _stockRepository = new Lazy<IStockRepository>(() => new StockRepository(_context));
         }
 
         public IProductRepository Product => _productRepository.Value;
+        public IStockRepository Stock => _stockRepository.Value;
 
-        public void Save()
-        {   
-            _context.SaveChanges();
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

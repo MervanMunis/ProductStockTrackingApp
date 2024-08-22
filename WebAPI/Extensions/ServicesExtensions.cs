@@ -18,5 +18,9 @@ namespace WebAPI.Extensions
 
         public static void ConfigureServiceManager(this IServiceCollection services) =>
             services.AddScoped<IServiceManager, ServiceManager>();
+
+        public static void ConfigureAutoMapper(this IServiceCollection services) =>
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        
     }
 }

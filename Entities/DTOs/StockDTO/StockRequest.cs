@@ -1,15 +1,12 @@
-﻿using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Entities.DTOs.StockDTO
 {
     public class StockRequest
     {
         public Guid ProductId { get; set; }
+
+        [Required]
         public int Quantity { get; set; }
     }
 }

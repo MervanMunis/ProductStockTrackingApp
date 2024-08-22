@@ -77,3 +77,6 @@ C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Presentation.dll
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Presentation.pdb
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Humanizer.dll
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\AutoMapper.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\obj\Debug\net6.0\WebAPI.sourcelink.json

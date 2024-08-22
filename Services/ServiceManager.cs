@@ -1,10 +1,6 @@
-﻿using Repositories.Contracts;
+﻿using AutoMapper;
+using Repositories.Contracts;
 using Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
@@ -12,10 +8,15 @@ namespace Services
     {
         private readonly Lazy<IProductService> _productService;
 
-        public ServiceManager(IRepositoryManager repositoryManager)
+        private readonly Lazy<IStockService> _stockService;
+
+        public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
         {
-            _productService = new Lazy<IProductService>(() => new ProductManager(repositoryManager));
+            _productService = new Lazy<IProductService>(() => new ProductManager(repositoryManager, mapper));
+            _stockService = new Lazy<IStockService>(() => new StockManager(repositoryManager, mapper));
         }
         public IProductService ProductService => _productService.Value; 
+
+        public IStockService StockService => _stockService.Value;
     }
 }
