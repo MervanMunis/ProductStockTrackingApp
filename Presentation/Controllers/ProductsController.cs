@@ -1,4 +1,5 @@
 ﻿using Entities.DTOs.ProductDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -15,7 +16,8 @@ namespace Presentation.Controllers
             _manager = manager;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
+        [Authorize]
         public async Task<IActionResult> GetAllProducts()
         {
             try
@@ -29,7 +31,24 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet("active")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetActiveProducts()
+        {
+            var products = await _manager.ProductService.GetProductsByIsDeletedStatusAsync(false, false);
+            return Ok(products);
+        }
+
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDeletedProducts()
+        {
+            var products = await _manager.ProductService.GetProductsByIsDeletedStatusAsync(true, false);
+            return Ok(products);
+        }
+
         [HttpGet("{id:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetProductById([FromRoute(Name = "id")] Guid id)
         {
             try
@@ -50,6 +69,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateOneProduct([FromBody] ProductRequest productRequest)
         {
             try
@@ -70,6 +90,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateOneProduct([FromRoute(Name = "id")] Guid id, [FromBody] ProductRequest productRequest)
         {
             try
@@ -90,6 +111,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOneProduct([FromRoute(Name = "id")] Guid id)
         {
             try

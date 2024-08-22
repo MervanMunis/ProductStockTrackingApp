@@ -80,3 +80,10 @@ C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.Entity
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\merva\Desktop\StockTrackingApp\WebAPI\obj\Debug\net6.0\WebAPI.sourcelink.json
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\merva\Desktop\StockTrackingApp\WebAPI\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll

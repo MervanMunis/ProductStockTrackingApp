@@ -6,5 +6,6 @@ namespace Repositories.Contracts
     {
         Task<IEnumerable<Product>> GetAllAsync(bool trackChanges);
         Task<Product> GetByIdAsync(Guid id, bool trackChanges);
+        Task<IEnumerable<Product>> GetByIsDeletedStatusAsync(bool isDeleted, bool trackChanges);
     }
 }

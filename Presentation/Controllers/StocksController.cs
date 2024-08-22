@@ -1,6 +1,7 @@
 ﻿using Entities.DTOs.ProductDTO;
 using Entities.DTOs.StockDTO;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -17,7 +18,8 @@ namespace Presentation.Controllers
             _manager = manager;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
+        [Authorize]
         public async Task<IActionResult> GetAllStocks()
         {
             try
@@ -31,7 +33,24 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet("active")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetActiveStocks()
+        {
+            var stocks = await _manager.StockService.GetStocksByIsDeletedStatusAsync(false, false);
+            return Ok(stocks);
+        }
+
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetDeletedStocks()
+        {
+            var stocks = await _manager.StockService.GetStocksByIsDeletedStatusAsync(true, false);
+            return Ok(stocks);
+        }
+
         [HttpGet("{id:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetStockById([FromRoute(Name = "id")] Guid id)
         {
             try
@@ -52,6 +71,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateStock([FromBody] StockRequest stockRequest)
         {
             try
@@ -72,6 +92,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("report")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProductStockReport()
         {
             try
@@ -86,6 +107,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateStock([FromRoute(Name = "id")] Guid id, [FromBody] StockRequest stockRequest)
         {
             try
@@ -106,6 +128,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteStock([FromRoute(Name = "id")] Guid id)
         {
             try

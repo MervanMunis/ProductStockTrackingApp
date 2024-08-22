@@ -6,6 +6,8 @@ namespace Services.Contracts
     public interface IProductService
     {
         Task<IEnumerable<ProductResponse>> GetAllProductsAsync(bool trackChanges);
+        Task<IEnumerable<ProductResponse>> GetProductsByIsDeletedStatusAsync(bool isDeleted, bool trackChanges);
+        Task<IEnumerable<ProductResponse>> GetAllProductsWithDeletedStatusAsync(bool trackChanges);
         Task<ProductResponse> GetProductByIdAsync(Guid id, bool trackChanges);
         Task<ProductResponse> CreateProductAsync(ProductRequest productRequest);
         Task UpdateProductAsync(Guid id, ProductRequest productRequest, bool trackChanges);

@@ -1,9 +1,25 @@
 [
   {
-    "ContainingType": "Presentation.Controllers.ProductsController",
-    "Method": "GetAllProducts",
-    "RelativePath": "api/Products",
-    "HttpMethod": "GET",
+    "ContainingType": "Presentation.Controllers.AuthenticationController",
+    "Method": "Login",
+    "RelativePath": "api/Authentication/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginRequest",
+        "Type": "Entities.DTOs.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.AuthenticationController",
+    "Method": "Logout",
+    "RelativePath": "api/Authentication/Logout",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
@@ -79,9 +95,29 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Presentation.Controllers.StocksController",
-    "Method": "GetAllStocks",
-    "RelativePath": "api/Stocks",
+    "ContainingType": "Presentation.Controllers.ProductsController",
+    "Method": "GetActiveProducts",
+    "RelativePath": "api/Products/active",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.ProductsController",
+    "Method": "GetAllProducts",
+    "RelativePath": "api/Products/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.ProductsController",
+    "Method": "GetDeletedProducts",
+    "RelativePath": "api/Products/deleted",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -155,6 +191,36 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.StocksController",
+    "Method": "GetActiveStocks",
+    "RelativePath": "api/Stocks/active",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.StocksController",
+    "Method": "GetAllStocks",
+    "RelativePath": "api/Stocks/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.StocksController",
+    "Method": "GetDeletedStocks",
+    "RelativePath": "api/Stocks/deleted",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

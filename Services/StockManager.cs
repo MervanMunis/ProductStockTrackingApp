@@ -42,6 +42,18 @@ namespace Services
             return stockResponses;
         }
 
+        public async Task<IEnumerable<StockResponse>> GetStocksByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        {
+            var stocks = await _repositoryManager.Stock.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
+            return _mapper.Map<IEnumerable<StockResponse>>(stocks);
+        }
+
+        public async Task<IEnumerable<StockResponse>> GetAllStocksWithDeletedStatusAsync(bool trackChanges)
+        {
+            var stocks = await _repositoryManager.Stock.GetAllAsync(trackChanges);
+            return _mapper.Map<IEnumerable<StockResponse>>(stocks);
+        }
+
         public async Task<StockResponse> GetStockByIdAsync(Guid id, bool trackChanges)
         {
             var stock = await _repositoryManager.Stock.GetByIdAsync(id, trackChanges);

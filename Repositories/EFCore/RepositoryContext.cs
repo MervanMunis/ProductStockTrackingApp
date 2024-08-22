@@ -1,13 +1,13 @@
 ﻿using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repositories.EFCore
 {
-    public class RepositoryContext : DbContext
+    public class RepositoryContext : IdentityDbContext<ApplicationUser>
     {
-        public RepositoryContext(DbContextOptions options) : base(options) 
+        public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options) 
         {
-
         }
 
         public DbSet<Product>? Products { get; set; }

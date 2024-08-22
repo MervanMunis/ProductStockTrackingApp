@@ -17,6 +17,11 @@ namespace Repositories.EFCore
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Stock>> GetByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        {
+            return await FindByCondition(s => s.IsDeleted == isDeleted, trackChanges).ToListAsync();
+        }
+
         public async Task<Stock> GetByIdAsync(Guid id, bool trackChanges)
         {
             return await FindByCondition(s => s.UUID.Equals(id), trackChanges)
@@ -29,6 +34,11 @@ namespace Repositories.EFCore
                 .Include(s => s.Product) // Include the related Product entity
                 .OrderBy(s => s.CreationTime)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Stock>> GetByProductIdAsync(Guid productId, bool trackChanges)
+        {
+            return await FindByCondition(s => s.ProductId.Equals(productId), trackChanges).ToListAsync();
         }
     }
 }

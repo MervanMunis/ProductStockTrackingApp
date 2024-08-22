@@ -41,6 +41,17 @@ namespace Services
             return productResponses;
         }
 
+        public async Task<IEnumerable<ProductResponse>> GetProductsByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        {
+            var products = await _repositoryManager.Product.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
+            return _mapper.Map<IEnumerable<ProductResponse>>(products);
+        }
+
+        public async Task<IEnumerable<ProductResponse>> GetAllProductsWithDeletedStatusAsync(bool trackChanges)
+        {
+            var products = await _repositoryManager.Product.GetAllAsync(trackChanges);
+            return _mapper.Map<IEnumerable<ProductResponse>>(products);
+        }
         public async Task<ProductResponse> GetProductByIdAsync(Guid id, bool trackChanges)
         {
             var product = await _repositoryManager.Product.GetByIdAsync(id, trackChanges);
@@ -89,6 +100,14 @@ namespace Services
 
             productEntity.IsDeleted = true;
             productEntity.DeletionTime = DateTime.UtcNow;
+
+            // Fetch all related stocks and mark them as deleted
+            var relatedStocks = await _repositoryManager.Stock.GetByProductIdAsync(productEntity.UUID, trackChanges);
+            foreach (var stock in relatedStocks)
+            {
+                stock.IsDeleted = true;
+                _repositoryManager.Stock.Update(stock);
+            }
 
             _repositoryManager.Product.Update(productEntity);
             await _repositoryManager.SaveAsync();

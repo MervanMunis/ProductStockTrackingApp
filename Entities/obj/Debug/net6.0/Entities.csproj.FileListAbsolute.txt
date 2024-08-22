@@ -10,3 +10,4 @@ C:\Users\merva\Desktop\StockTrackingApp\Entities\obj\Debug\net6.0\refint\Entitie
 C:\Users\merva\Desktop\StockTrackingApp\Entities\obj\Debug\net6.0\Entities.pdb
 C:\Users\merva\Desktop\StockTrackingApp\Entities\obj\Debug\net6.0\ref\Entities.dll
 C:\Users\merva\Desktop\StockTrackingApp\Entities\obj\Debug\net6.0\Entities.sourcelink.json
+C:\Users\merva\Desktop\StockTrackingApp\Entities\obj\Debug\net6.0\Entities.csproj.AssemblyReference.cache

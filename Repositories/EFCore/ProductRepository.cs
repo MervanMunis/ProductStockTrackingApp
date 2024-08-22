@@ -16,6 +16,10 @@ namespace Repositories.EFCore
                 .OrderBy(p => p.Name)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Product>> GetByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        {
+            return await FindByCondition(p => p.IsDeleted == isDeleted, trackChanges).ToListAsync();
+        }
 
         public async Task<Product> GetByIdAsync(Guid id, bool trackChanges)
         {
