@@ -1,0 +1,7 @@
+# Ignore bin and obj directories
+**/bin/
+**/obj/
+
+# Ignore Debug directories for specific .NET version
+**/bin/Debug/
+**/bin/Debug/net6.0/
