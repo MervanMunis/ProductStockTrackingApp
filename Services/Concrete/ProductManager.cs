@@ -4,7 +4,7 @@ using Entities.Models;
 using Repositories.Contracts;
 using Services.Contracts;
 
-namespace Services
+namespace Services.Concrete
 {
     public class ProductManager : IProductService
     {
@@ -77,7 +77,7 @@ namespace Services
             {
                 throw new ArgumentNullException(nameof(productRequest));
             }
-            
+
             if (productEntity.IsDeleted is true)
             {
                 throw new Exception($"Product with id: {id} could not be found.");

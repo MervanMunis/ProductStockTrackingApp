@@ -1,7 +1,7 @@
 ﻿using Entities.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace Services
+namespace Services.Concrete
 {
     public class RoleManager
     {
@@ -18,11 +18,11 @@ namespace Services
 
             if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                ApplicationUser admin = new ApplicationUser 
-                { 
-                    Email = adminEmail, 
+                ApplicationUser admin = new ApplicationUser
+                {
+                    Email = adminEmail,
                     UserName = adminEmail,
-                    FullName = "Admin User" 
+                    FullName = "Admin User"
                 };
 
                 IdentityResult result = await userManager.CreateAsync(admin, password);

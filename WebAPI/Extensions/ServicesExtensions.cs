@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Repositories.EFCore;
-using Services;
+using Services.Concrete;
 using Services.Contracts;
 
 namespace WebAPI.Extensions

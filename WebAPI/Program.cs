@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repositories.EFCore;
-using Services;
+using Services.Concrete;
 using System.Text;
 using WebAPI.Extensions;
 
