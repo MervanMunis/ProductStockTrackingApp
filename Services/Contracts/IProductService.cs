@@ -1,16 +1,15 @@
 ﻿using Entities.DTOs.ProductDTO;
-using Entities.Models;
+using Services.Exceptions;
 
 namespace Services.Contracts
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductResponse>> GetAllProductsAsync(bool trackChanges);
-        Task<IEnumerable<ProductResponse>> GetProductsByIsDeletedStatusAsync(bool isDeleted, bool trackChanges);
-        Task<IEnumerable<ProductResponse>> GetAllProductsWithDeletedStatusAsync(bool trackChanges);
-        Task<ProductResponse> GetProductByIdAsync(Guid id, bool trackChanges);
-        Task<ProductResponse> CreateProductAsync(ProductRequest productRequest);
-        Task UpdateProductAsync(Guid id, ProductRequest productRequest, bool trackChanges);
-        Task DeleteProductAsync(Guid id, bool trackChanges);
+        Task<ServiceResult<IEnumerable<ProductResponse>>> GetAllProductsAsync(bool trackChanges);
+        Task<ServiceResult<IEnumerable<ProductResponse>>> GetActiveProductsAsync(bool isDeleted, bool trackChanges);
+        Task<ServiceResult<ProductResponse>> GetProductByIdAsync(Guid id, bool trackChanges);
+        Task<ServiceResult<string>> CreateProductAsync(ProductRequest productRequest);
+        Task<ServiceResult<string>> UpdateProductAsync(Guid id, ProductRequest productRequest, bool trackChanges);
+        Task<ServiceResult<string>> DeleteProductAsync(Guid id, bool trackChanges);
     }
 }

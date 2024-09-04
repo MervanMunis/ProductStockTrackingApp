@@ -20,110 +20,72 @@ namespace Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllProducts()
         {
-            try
-            {
-                var products = await _manager.ProductService.GetAllProductsAsync(false);
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var result = await _manager.ProductService.GetAllProductsAsync(false);
+
+            if (!result.Success)
+                return Problem(result.ErrorMessage);
+
+            return Ok(result.Data);            
         }
 
         [HttpGet("active")]
         [AllowAnonymous]
         public async Task<IActionResult> GetActiveProducts()
         {
-            var products = await _manager.ProductService.GetProductsByIsDeletedStatusAsync(false, false);
-            return Ok(products);
-        }
+            var result = await _manager.ProductService.GetActiveProductsAsync(false, false);
 
-        [HttpGet("deleted")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetDeletedProducts()
-        {
-            var products = await _manager.ProductService.GetProductsByIsDeletedStatusAsync(true, false);
-            return Ok(products);
+            if (!result.Success)
+                return Problem(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
 
         [HttpGet("{id:Guid}")]
         [Authorize]
         public async Task<IActionResult> GetProductById([FromRoute(Name = "id")] Guid id)
         {
-            try
-            {
-                var product = await _manager.ProductService.GetProductByIdAsync(id, false);
+            var result = await _manager.ProductService.GetProductByIdAsync(id, false);
 
-                if (product is null)
-                {
-                    return NotFound();
-                }
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
 
-                return Ok(product);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(result.Data);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateOneProduct([FromBody] ProductRequest productRequest)
         {
-            try
-            {
-                if (productRequest is null)
-                {
-                    return BadRequest();
-                }
+            var result = await _manager.ProductService.CreateProductAsync(productRequest);
 
-                var createdProduct = await _manager.ProductService.CreateProductAsync(productRequest);
-
-                return StatusCode(201, createdProduct);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
+            
+            return Ok(result.Data);
         }
 
         [HttpPut("{id:Guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateOneProduct([FromRoute(Name = "id")] Guid id, [FromBody] ProductRequest productRequest)
         {
-            try
-            {
-                if (productRequest is null)
-                {
-                    return BadRequest();
-                }
+            var result = await _manager.ProductService.UpdateProductAsync(id, productRequest, true);
 
-                await _manager.ProductService.UpdateProductAsync(id, productRequest, true);
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id:Guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOneProduct([FromRoute(Name = "id")] Guid id)
         {
-            try
-            {
-                await _manager.ProductService.DeleteProductAsync(id, false);
+            var result = await _manager.ProductService.DeleteProductAsync(id, false);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
+            
+            return Ok(result.Data);
         }
     }
 }

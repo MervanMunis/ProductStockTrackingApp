@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Entities.DTOs.ProductDTO;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Services.Contracts;
+using Services.Exceptions;
 
 namespace Services.Concrete
 {
@@ -17,100 +19,104 @@ namespace Services.Concrete
             _mapper = mapper;
         }
 
-        public async Task<ProductResponse> CreateProductAsync(ProductRequest productRequest)
+        public async Task<ServiceResult<string>> CreateProductAsync(ProductRequest productRequest)
         {
-            if (productRequest is null)
-            {
-                throw new ArgumentNullException(nameof(productRequest));
-            }
+            if (productRequest.Name == null)
+                return ServiceResult<string>.FailureResult($"Product name cannot be empty!");
+
+            bool product = _repositoryManager.ProductRepository
+                .Any(p => p.Name == productRequest!.Name);
+
+            if (product)
+                return ServiceResult<string>.FailureResult($"The product with name: {productRequest.Name} already exists!");
 
             var productEntity = _mapper.Map<Product>(productRequest);
             productEntity.CreationTime = DateTime.UtcNow;
 
-            await _repositoryManager.Product.CreateAsync(productEntity);
+            await _repositoryManager.ProductRepository.CreateAsync(productEntity);
             await _repositoryManager.SaveAsync();
 
-            var productResponse = _mapper.Map<ProductResponse>(productEntity);
-            return productResponse;
+            return ServiceResult<string>.SuccessResult("The product is created.");
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetAllProductsAsync(bool trackChanges)
+        public async Task<ServiceResult<IEnumerable<ProductResponse>>> GetAllProductsAsync(bool trackChanges)
         {
-            var products = await _repositoryManager.Product.GetAllAsync(trackChanges);
+            var products = await _repositoryManager.ProductRepository.GetAllAsync(trackChanges);
             var productResponses = _mapper.Map<IEnumerable<ProductResponse>>(products);
-            return productResponses;
+
+            return ServiceResult<IEnumerable<ProductResponse>>.SuccessResult(productResponses);
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetProductsByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        public async Task<ServiceResult<IEnumerable<ProductResponse>>> GetActiveProductsAsync(bool isDeleted, bool trackChanges)
         {
-            var products = await _repositoryManager.Product.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
-            return _mapper.Map<IEnumerable<ProductResponse>>(products);
+            var products = await _repositoryManager.ProductRepository.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
+            var productResponse = _mapper.Map<IEnumerable<ProductResponse>>(products);
+
+            return ServiceResult<IEnumerable<ProductResponse>>.SuccessResult(productResponse);
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetAllProductsWithDeletedStatusAsync(bool trackChanges)
+        public async Task<ServiceResult<ProductResponse>> GetProductByIdAsync(Guid id, bool trackChanges)
         {
-            var products = await _repositoryManager.Product.GetAllAsync(trackChanges);
-            return _mapper.Map<IEnumerable<ProductResponse>>(products);
-        }
-        public async Task<ProductResponse> GetProductByIdAsync(Guid id, bool trackChanges)
-        {
-            var product = await _repositoryManager.Product.GetByIdAsync(id, trackChanges);
-            if (product == null)
-            {
-                throw new Exception($"Product with id: {id} could not be found.");
-            }
+            var product = await _repositoryManager.ProductRepository.GetByIdAsync(id, trackChanges);
+
+            if (product == null || product!.IsDeleted == true)
+                return ServiceResult<ProductResponse>.FailureResult("The product could not be found!");
 
             var productResponse = _mapper.Map<ProductResponse>(product);
-            return productResponse;
+            return ServiceResult<ProductResponse>.SuccessResult(productResponse);
         }
 
-        public async Task UpdateProductAsync(Guid id, ProductRequest productRequest, bool trackChanges)
+        public async Task<ServiceResult<string>> UpdateProductAsync(Guid id, ProductRequest productRequest, bool trackChanges)
         {
-            var productEntity = await _repositoryManager.Product.GetByIdAsync(id, trackChanges);
+            if (productRequest.Name == null)
+                return ServiceResult<string>.FailureResult("The product name cannot be empty!");
 
-            if (productEntity == null)
-            {
-                throw new Exception($"Product with id: {id} could not be found.");
-            }
+            bool product = _repositoryManager.ProductRepository
+                .Any(p => p.Name == productRequest!.Name);
 
-            if (productRequest == null)
-            {
-                throw new ArgumentNullException(nameof(productRequest));
-            }
+            if (product)
+                return ServiceResult<string>.FailureResult($"The product with name: {productRequest.Name} already exists!");
 
-            if (productEntity.IsDeleted is true)
-            {
-                throw new Exception($"Product with id: {id} could not be found.");
-            }
+            var productEntity = await _repositoryManager.ProductRepository.GetByIdAsync(id, trackChanges);
+
+            if (productEntity == null || productEntity!.IsDeleted is true)
+                return ServiceResult<string>.FailureResult($"Product with id: {id} could not be found!");
 
             _mapper.Map(productRequest, productEntity);
 
-            _repositoryManager.Product.Update(productEntity);
+            _repositoryManager.ProductRepository.Update(productEntity);
             await _repositoryManager.SaveAsync();
+
+            return ServiceResult<string>.SuccessResult("The product is updated.");
         }
 
-        public async Task DeleteProductAsync(Guid id, bool trackChanges)
+        public async Task<ServiceResult<string>> DeleteProductAsync(Guid id, bool trackChanges)
         {
-            var productEntity = await _repositoryManager.Product.GetByIdAsync(id, trackChanges);
+            var productEntity = await _repositoryManager.ProductRepository.GetByIdAsync(id, trackChanges);
+
+            if (productEntity.IsDeleted == true)
+                return ServiceResult<string>.FailureResult("The product is already deleted!");
 
             if (productEntity == null)
-            {
-                throw new Exception($"Product with id: {id} could not be found.");
-            }
-
+                return ServiceResult<string>.FailureResult($"Product with id: {id} could not be found.");
+            
             productEntity.IsDeleted = true;
             productEntity.DeletionTime = DateTime.UtcNow;
 
             // Fetch all related stocks and mark them as deleted
-            var relatedStocks = await _repositoryManager.Stock.GetByProductIdAsync(productEntity.UUID, trackChanges);
+            var relatedStocks = await _repositoryManager.StockRepository
+                .GetByProductIdAsync(productEntity.UUID, trackChanges);
+
             foreach (var stock in relatedStocks)
             {
                 stock.IsDeleted = true;
-                _repositoryManager.Stock.Update(stock);
+                _repositoryManager.StockRepository.Update(stock);
             }
 
-            _repositoryManager.Product.Update(productEntity);
+            _repositoryManager.ProductRepository.Update(productEntity);
             await _repositoryManager.SaveAsync();
+
+            return ServiceResult<string>.SuccessResult("The product is deleted.");
         }
     }
 }

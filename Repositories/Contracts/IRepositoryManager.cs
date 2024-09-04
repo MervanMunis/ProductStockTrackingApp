@@ -2,8 +2,8 @@
 {
     public interface IRepositoryManager
     {
-        IProductRepository Product { get; }
-        IStockRepository Stock { get; }
+        IProductRepository ProductRepository { get; }
+        IStockRepository StockRepository { get; }
         Task SaveAsync();
     }
 }

@@ -13,7 +13,7 @@ namespace WebAPI.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, 
             IConfiguration configuration) => services.AddDbContext<RepositoryContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("sqlConnection"),
-                    sqlOptions => sqlOptions.MigrationsAssembly(typeof(RepositoryContext).Assembly.FullName)));
+                    sqlOptions => sqlOptions.MigrationsAssembly("WebAPI")));
 
         public static void ConfigureIdentity(this IServiceCollection services) =>
             services.AddIdentity<ApplicationUser, IdentityRole>(opts =>

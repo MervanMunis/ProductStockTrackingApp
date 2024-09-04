@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class Stock
+    public class Stock : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,14 +15,8 @@ namespace Entities.Models
         [Required]
         public int Quantity { get; set; }
 
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime CreationTime { get; set; }
-        public bool IsDeleted { get; set; }
-
         // Navigation property
         [ForeignKey(nameof(ProductId))]
         public Product? Product { get; set; }
-
     }
 }

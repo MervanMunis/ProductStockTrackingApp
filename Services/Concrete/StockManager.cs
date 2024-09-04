@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Entities.DTOs.ProductDTO;
 using Entities.DTOs.ProductStockReportDTO;
 using Entities.DTOs.StockDTO;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Services.Contracts;
+using Services.Exceptions;
 
 namespace Services.Concrete
 {
@@ -18,77 +21,88 @@ namespace Services.Concrete
             _mapper = mapper;
         }
 
-        public async Task<StockResponse> CreateStockAsync(StockRequest stockRequest)
+        public async Task<ServiceResult<string>> CreateStockAsync(StockRequest stockRequest)
         {
             if (stockRequest == null)
-            {
-                throw new ArgumentNullException(nameof(stockRequest));
-            }
+                return ServiceResult<string>.FailureResult("Stock request cannot be empty!");
+
+            var product = await _repositoryManager.ProductRepository.GetByIdAsync(stockRequest.ProductId, false);
+
+            if (product == null || product.IsDeleted == true)
+                return ServiceResult<string>.FailureResult("The product is not found!");
+
+            var stock = await _repositoryManager.StockRepository
+                .FindByCondition(s => s.ProductId == stockRequest.ProductId, false)
+                .FirstOrDefaultAsync();
+
+            if (stock != null && stock!.Quantity >= 0)
+                return ServiceResult<string>.FailureResult($"The stock already exists for the id: {stockRequest.ProductId} number!");
 
             var stockEntity = _mapper.Map<Stock>(stockRequest);
+
             stockEntity.CreationTime = DateTime.UtcNow;
 
-            await _repositoryManager.Stock.CreateAsync(stockEntity);
+            await _repositoryManager.StockRepository.CreateAsync(stockEntity);
+
             await _repositoryManager.SaveAsync();
 
-            var stockResponse = _mapper.Map<StockResponse>(stockEntity);
-            return stockResponse;
+            return ServiceResult<string>.SuccessResult("The stock is created.");
         }
 
-        public async Task<IEnumerable<StockResponse>> GetAllStocksAsync(bool trackChanges)
+        public async Task<ServiceResult<IEnumerable<StockResponse>>> GetAllStocksAsync(bool trackChanges)
         {
-            var stocks = await _repositoryManager.Stock.GetAllAsync(trackChanges);
+            var stocks = await _repositoryManager.StockRepository.GetAllAsync(trackChanges);
             var stockResponses = _mapper.Map<IEnumerable<StockResponse>>(stocks);
-            return stockResponses;
+
+            return ServiceResult<IEnumerable<StockResponse>>.SuccessResult(stockResponses);
         }
 
-        public async Task<IEnumerable<StockResponse>> GetStocksByIsDeletedStatusAsync(bool isDeleted, bool trackChanges)
+        public async Task<ServiceResult<IEnumerable<StockResponse>>> GetAllActiveStocksAsync(bool isDeleted, bool trackChanges)
         {
-            var stocks = await _repositoryManager.Stock.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
-            return _mapper.Map<IEnumerable<StockResponse>>(stocks);
+            var stocks = await _repositoryManager.StockRepository.GetByIsDeletedStatusAsync(isDeleted, trackChanges);
+            var stockResponses = _mapper.Map<IEnumerable<StockResponse>>(stocks);
+
+            return ServiceResult<IEnumerable<StockResponse>>.SuccessResult(stockResponses); 
         }
 
-        public async Task<IEnumerable<StockResponse>> GetAllStocksWithDeletedStatusAsync(bool trackChanges)
+        public async Task<ServiceResult<StockResponse>> GetStockByIdAsync(Guid id, bool trackChanges)
         {
-            var stocks = await _repositoryManager.Stock.GetAllAsync(trackChanges);
-            return _mapper.Map<IEnumerable<StockResponse>>(stocks);
-        }
+            var stock = await _repositoryManager.StockRepository.GetByIdAsync(id, trackChanges);
 
-        public async Task<StockResponse> GetStockByIdAsync(Guid id, bool trackChanges)
-        {
-            var stock = await _repositoryManager.Stock.GetByIdAsync(id, trackChanges);
-            if (stock == null)
-            {
-                throw new Exception($"Stock with id: {id} could not be found.");
-            }
+            if (stock == null || stock!.IsDeleted == true)
+                return ServiceResult<StockResponse>.FailureResult($"The stock with id: {id} could not be found!");
 
             var stockResponse = _mapper.Map<StockResponse>(stock);
-            return stockResponse;
+
+            return ServiceResult<StockResponse>.SuccessResult(stockResponse);
         }
 
-        public async Task UpdateStockAsync(Guid id, StockRequest stockRequest, bool trackChanges)
+        public async Task<ServiceResult<string>> UpdateStockAsync(Guid id, StockRequest stockRequest, bool trackChanges)
         {
-            var stockEntity = await _repositoryManager.Stock.GetByIdAsync(id, trackChanges);
-
-            if (stockEntity == null)
-            {
-                throw new Exception($"Stock with id: {id} could not be found.");
-            }
-
             if (stockRequest == null)
-            {
-                throw new ArgumentNullException(nameof(stockRequest));
-            }
+                return ServiceResult<string>.FailureResult("Stock request can not be empty!");
 
+            var product = await _repositoryManager.ProductRepository.GetByIdAsync(stockRequest.ProductId, false);
+
+            if (product == null || product.IsDeleted == true)
+                return ServiceResult<string>.FailureResult("The product is not found!");
+
+            var stockEntity = await _repositoryManager.StockRepository.GetByIdAsync(id, trackChanges);
+
+            if (stockEntity == null || stockEntity!.IsDeleted is true)
+                return ServiceResult<string>.FailureResult($"Stock with id: {id} could not be found!");
+            
             _mapper.Map(stockRequest, stockEntity);
 
-            _repositoryManager.Stock.Update(stockEntity);
+            _repositoryManager.StockRepository.Update(stockEntity);
             await _repositoryManager.SaveAsync();
+
+            return ServiceResult<string>.SuccessResult("Stock is updated.");
         }
 
-        public async Task<IEnumerable<ProductStockReportResponse>> GetProductStockReportAsync(bool trackChanges)
+        public async Task<ServiceResult<IEnumerable<ProductStockReportResponse>>> GetProductStockReportAsync(bool trackChanges)
         {
-            var stocks = await _repositoryManager.Stock.GetAllWithProductAsync(trackChanges); // Use the new method
+            var stocks = await _repositoryManager.StockRepository.GetStocksWithProductAsync(trackChanges);
 
             var report = stocks.Select(stock => new ProductStockReportResponse
             {
@@ -99,22 +113,28 @@ namespace Services.Concrete
                 StockCreationTime = stock.CreationTime
             });
 
-            return report;
+            if (report == null)
+                return ServiceResult<IEnumerable<ProductStockReportResponse>>.FailureResult("The report could not be generated!");
+
+            return ServiceResult<IEnumerable<ProductStockReportResponse>>.SuccessResult(report);
         }
 
-        public async Task DeleteStockAsync(Guid id, bool trackChanges)
+        public async Task<ServiceResult<string>> DeleteStockAsync(Guid id, bool trackChanges)
         {
-            var stockEntity = await _repositoryManager.Stock.GetByIdAsync(id, trackChanges);
+            var stockEntity = await _repositoryManager.StockRepository.GetByIdAsync(id, trackChanges);
 
             if (stockEntity == null)
-            {
-                throw new Exception($"Stock with id: {id} could not be found.");
-            }
+                return ServiceResult<string>.FailureResult($"Stock with id: {id} could not be found!");
 
+            if (stockEntity.IsDeleted == true)
+                return ServiceResult<string>.FailureResult("The stock is already deleted!");            
+            
             stockEntity.IsDeleted = true;
 
-            _repositoryManager.Stock.Update(stockEntity);
+            _repositoryManager.StockRepository.Update(stockEntity);
             await _repositoryManager.SaveAsync();
+
+            return ServiceResult<string>.SuccessResult("The stock is deleted.");
         }
     }
 }

@@ -12,7 +12,7 @@ using Repositories.EFCore;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20240822111805_Initial")]
+    [Migration("20240904155527_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

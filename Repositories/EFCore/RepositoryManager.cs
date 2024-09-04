@@ -15,8 +15,8 @@ namespace Repositories.EFCore
             _stockRepository = new Lazy<IStockRepository>(() => new StockRepository(_context));
         }
 
-        public IProductRepository Product => _productRepository.Value;
-        public IStockRepository Stock => _stockRepository.Value;
+        public IProductRepository ProductRepository => _productRepository.Value;
+        public IStockRepository StockRepository => _stockRepository.Value;
 
         public async Task SaveAsync()
         {

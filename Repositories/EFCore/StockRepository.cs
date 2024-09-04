@@ -28,7 +28,7 @@ namespace Repositories.EFCore
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Stock>> GetAllWithProductAsync(bool trackChanges) // New method
+        public async Task<IEnumerable<Stock>> GetStocksWithProductAsync(bool trackChanges) // New method
         {
             return await FindAll(trackChanges)
                 .Include(s => s.Product) // Include the related Product entity

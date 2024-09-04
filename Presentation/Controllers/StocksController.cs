@@ -4,6 +4,7 @@ using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
+using Services.Exceptions;
 
 namespace Presentation.Controllers
 {
@@ -22,125 +23,84 @@ namespace Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllStocks()
         {
-            try
-            {
-                var stocks = await _manager.StockService.GetAllStocksAsync(false);
-                return Ok(stocks);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var result = await _manager.StockService.GetAllStocksAsync(false);
+
+            if (!result.Success)
+                return Problem(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
 
         [HttpGet("active")]
         [AllowAnonymous]
         public async Task<IActionResult> GetActiveStocks()
         {
-            var stocks = await _manager.StockService.GetStocksByIsDeletedStatusAsync(false, false);
-            return Ok(stocks);
-        }
+            var result = await _manager.StockService.GetAllActiveStocksAsync(false, false);
 
-        [HttpGet("deleted")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetDeletedStocks()
-        {
-            var stocks = await _manager.StockService.GetStocksByIsDeletedStatusAsync(true, false);
-            return Ok(stocks);
+            if (!result.Success)
+                return Problem(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
 
         [HttpGet("{id:Guid}")]
         [Authorize]
         public async Task<IActionResult> GetStockById([FromRoute(Name = "id")] Guid id)
         {
-            try
-            {
-                var stock = await _manager.StockService.GetStockByIdAsync(id, false);
+            var result = await _manager.StockService.GetStockByIdAsync(id, false);
 
-                if (stock is null)
-                {
-                    return NotFound();
-                }
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
 
-                return Ok(stock);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(result.Data);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateStock([FromBody] StockRequest stockRequest)
         {
-            try
-            {
-                if (stockRequest is null)
-                {
-                    return BadRequest();
-                }
+            var result = await _manager.StockService.CreateStockAsync(stockRequest);
+            
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
 
-                var createdStock = await _manager.StockService.CreateStockAsync(stockRequest);
-
-                return StatusCode(201, createdStock);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(result.Data);
         }
 
         [HttpGet("report")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProductStockReport()
         {
-            try
-            {
-                var report = await _manager.StockService.GetProductStockReportAsync(false);
-                return Ok(report);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var result = await _manager.StockService.GetProductStockReportAsync(false);
+            
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
 
         [HttpPut("{id:Guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateStock([FromRoute(Name = "id")] Guid id, [FromBody] StockRequest stockRequest)
         {
-            try
-            {
-                if (stockRequest == null)
-                {
-                    return BadRequest();
-                }
+            var result = await _manager.StockService.UpdateStockAsync(id, stockRequest, true);
 
-                await _manager.StockService.UpdateStockAsync(id, stockRequest, true);
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id:Guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteStock([FromRoute(Name = "id")] Guid id)
         {
-            try
-            {
-                await _manager.StockService.DeleteStockAsync(id, false);
+            var result = await _manager.StockService.DeleteStockAsync(id, false);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            if (!result.Success)
+                return NotFound(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
     }
 }

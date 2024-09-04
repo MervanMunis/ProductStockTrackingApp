@@ -38,5 +38,10 @@ namespace Repositories.EFCore
                 ? _context.Set<T>().Where(expression).AsNoTracking()
                 : _context.Set<T>().Where(expression);
         }
+
+        public bool Any(Expression<Func<T, bool>> expression)
+        {
+            return _context.Set<T>().Any(expression);
+        }
     }
 }

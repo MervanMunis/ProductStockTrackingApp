@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class Product
+    public class Product : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,13 +14,7 @@ namespace Entities.Models
         [Column(TypeName = "nvarchar(200)")]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime CreationTime { get; set; }
-
         [DataType(DataType.Date)]
         public DateTime? DeletionTime { get; set; }
-
-        public bool IsDeleted { get; set; }
     }
 }
